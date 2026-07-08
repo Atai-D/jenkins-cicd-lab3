@@ -5,6 +5,10 @@ pipeline {
         nodejs 'node'
     }
 
+    environment {
+        IMAGE_TAG = 'v1.0'
+    }
+
     stages {
         stage('checkout') {
             steps {
@@ -23,6 +27,18 @@ pipeline {
         stage('test') {
             steps {
                 sh 'npm test'
+            }
+        }
+
+        stage('docker build') {
+            steps {
+                script {
+                    def imageName = "node${env.BRANCH_NAME}:${env.IMAGE_TAG}"
+
+                    echo "Building Docker image: ${imageName}"
+
+                    sh "docker build -t ${imageName} ."
+                }
             }
         }
     }
