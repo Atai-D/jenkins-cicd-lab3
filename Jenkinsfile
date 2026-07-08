@@ -41,5 +41,22 @@ pipeline {
                 }
             }
         }
+         stage('deploy') {
+            steps {
+                script {
+                    def imageName = "node${env.BRANCH_NAME}:${env.IMAGE_TAG}"
+                    def containerName = "node${env.BRANCH_NAME}"
+                    def hostPort = env.BRANCH_NAME == 'main' ? '3000' : '3001'
+
+                    echo "deploying branch: ${env.BRANCH_NAME}"
+                    echo "image: ${imageName}"
+                    echo "container: ${containerName}"
+                    echo "host port: ${hostPort}"
+
+                    sh "docker rm -f ${containerName} || true"
+                    sh "docker run -d --name ${containerName} --restart unless-stopped -p ${hostPort}:3000 ${imageName}"
+                }
+            }
+        }
     }
 }
