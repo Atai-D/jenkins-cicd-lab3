@@ -1,10 +1,28 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node_7.8.0'
+    }
+
     stages {
-        stage('Branch check') {
+        stage('checkout') {
+            step {
+                checkout scm
+            }
+        }
+        
+        stage('build') {
             steps {
-                echo "Current branch: ${env.BRANCH_NAME}"
+                sh 'node -v'
+                sh 'npm -v'
+                sh 'npm install'
+            }
+        }
+
+        stage('test') {
+            steps {
+                sh 'npm test'
             }
         }
     }
